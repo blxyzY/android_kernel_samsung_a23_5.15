@@ -1,0 +1,11 @@
+#
+# Focaltech Touchscreen driver configuration
+#
+
+config TOUCHSCREEN_FTS_FT8720
+	tristate "Focaltech FT8720 touchscreen (SPI)"
+	depends on SPI_MASTER && INPUT_SEC_INPUT
+	help
+	  Say Y or M here if you have a Focaltech FT8720 SPI touch panel,
+	  as used on some Samsung Galaxy A23 4G (khaje) board variants.
+	  If unsure, say N.

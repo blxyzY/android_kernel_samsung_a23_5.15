@@ -23,6 +23,7 @@ obj-$(CONFIG_INPUT_KEYBOARD)	+= keyboard/
 obj-$(CONFIG_INPUT_MOUSE)	+= mouse/
 obj-$(CONFIG_INPUT_JOYSTICK)	+= joystick/
 obj-$(CONFIG_INPUT_TABLET)	+= tablet/
+obj-$(CONFIG_INPUT_SEC_INPUT)	+= sec_input/
 obj-$(CONFIG_INPUT_TOUCHSCREEN)	+= touchscreen/
 obj-m							+= goodix/
 obj-m							+= chipone_fp/

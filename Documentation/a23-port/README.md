@@ -22,7 +22,14 @@ Status: **scaffolding only. This tree does not boot on A23 yet.**
 | `samsung,s2mpb03pmic` | `drivers/regulator/s2mpb03.c` | `CONFIG_REGULATOR_S2MPB03=m` |
 | `samsung,sec-thermistor` | `drivers/hwmon/sec_thermistor.c` | `CONFIG_SENSORS_SEC_THERMISTOR=m` (needs `HWMON`, now `=y` in `a23_sec_defconfig`) |
 
-Both build clean with clang 18 on `vendor/a23-gki_defconfig` + `a23_sec_defconfig`
+| `focaltech,fts` | `drivers/input/touchscreen/focaltech/ft8720/` | `CONFIG_TOUCHSCREEN_FTS_FT8720=m` (SPI; needs `INPUT_SEC_INPUT`) |
+| (framework) | `drivers/input/sec_input/` (sec_cmd, tsp_log, secure_touch, dumpkey) | `CONFIG_INPUT_SEC_INPUT=m` and friends |
+
+Optional hooks (`VBUS_NOTIFIER`, `SEC_ABC`, hall/fold, KUnit) are guarded in the sources and
+left disabled until their providers are ported. A23 also ships `ilitek,ili9881x-spi` and
+`novatek,NVT-ts-spi` panels; those drivers are still to be ported.
+
+All of these build clean with clang 18 on `vendor/a23-gki_defconfig` + `a23_sec_defconfig`
 (`ARCH=arm64 LLVM=1`). `m269` disables `HWMON`; A23 needs it for the thermistors.
 
 ## Port order (what blocks boot first)

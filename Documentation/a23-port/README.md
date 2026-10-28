@@ -16,6 +16,15 @@ Status: **scaffolding only. This tree does not boot on A23 yet.**
 - 44 of 75 compatibles used by the A23 DTS (`a23_eur_open_w00_r08`) have a driver only in 4.19.
 - This tree has no board DTS at all (`arch/arm64/boot/dts/vendor` is empty); DTS/DLKM live outside.
 
+## Ported so far (compile-tested only, not run on hardware)
+| compatible | driver | config |
+|---|---|---|
+| `samsung,s2mpb03pmic` | `drivers/regulator/s2mpb03.c` | `CONFIG_REGULATOR_S2MPB03=m` |
+| `samsung,sec-thermistor` | `drivers/hwmon/sec_thermistor.c` | `CONFIG_SENSORS_SEC_THERMISTOR=m` (needs `HWMON`, now `=y` in `a23_sec_defconfig`) |
+
+Both build clean with clang 18 on `vendor/a23-gki_defconfig` + `a23_sec_defconfig`
+(`ARCH=arm64 LLVM=1`). `m269` disables `HWMON`; A23 needs it for the thermistors.
+
 ## Port order (what blocks boot first)
 1. Board DTS for A23 (from `samsung/a23/` in 4.19) in the external devicetree repo.
 2. Display: panels `ft8720`, `ili7807s`, `nt36672c` + `ss_blic_s2dps01a01`.

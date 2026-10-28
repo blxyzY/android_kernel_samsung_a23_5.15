@@ -1587,6 +1587,14 @@ config SENSORS_SBRMI
 	  This driver can also be built as a module. If so, the module will
 	  be called sbrmi.
 
+config SENSORS_SEC_THERMISTOR
+	tristate "Samsung SEC thermistor"
+	depends on IIO && DRV_SAMSUNG
+	help
+	  This driver reads Samsung board thermistors through an IIO ADC
+	  channel and converts the ADC value to a temperature using the
+	  table from the device tree. Used on Samsung Galaxy A23 4G (khaje).
+
 config SENSORS_SHT15
 	tristate "Sensiron humidity and temperature sensors. SHT15 and compat."
 	depends on GPIOLIB || COMPILE_TEST

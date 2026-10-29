@@ -1,0 +1,68 @@
+/* Copyright (c) 2019, The Linux Foundation. All rights reserved.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 and
+ * only version 2 as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
+
+&aliases {
+	i2c18 = "/soc/i2c@18";
+};
+
+&soc {
+	sec-audio-sysfs {
+		compatible = "samsung,audio-sysfs";
+		status = "okay";
+		audio,num-amp = <1>;
+	};
+
+	samsung_q6audio_adaptation: samsung,q6audio-adaptation {
+		compatible = "samsung,q6audio-adaptation";
+		adaptation,device-tx-port-id = <0xB037>;
+		adaptation,spk-rx-port-id = <0x1000>;
+		adaptation,usb-rx-port-id = <0x7000>;
+		adaptation,bt-rx-port-id = <0x400e>;
+		adaptation,headset-rx-port-id = <0xB030>;
+	};
+
+	det_zones: det_zones {
+		#list-det-cells = <2>;
+	};
+
+	i2c_18: i2c@18 { /* SW I2C */
+		status = "ok";
+
+		cell-index = <18>;
+		compatible = "i2c-gpio";
+		gpios = <&tlmm 65 0 /* sda */
+			 &tlmm 66 0 /* scl */
+		>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&tas25xx_gpio_default>;
+		#i2c-gpio,delay-us = <2>;
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		tas256x:tas256x@4c {
+			#sound-dai-cells = <0>;
+			compatible = "ti, tas256x";
+			status = "ok";
+			reg = <0x4c>;
+			ti,reset-gpio = <&gpio_expander 17 0>;
+			ti,irq-gpio = <&tlmm 36 0>;
+			ti,left-channel = <0x4c>;
+			ti,channels = <1>; /* channel number */
+			ti,iv-width = <12>;
+			ti,vbat-mon = <1>;
+			ti,port_id = <0x1000>; /* Rx port ID use for Qcom platform */
+			ti,module_id_rx=<0x1000FC00>;  /* Rx Module ID for Qcom platform */
+			ti,module_id_tx=<0x1000FD00>; /* Tx Module ID for Qcom platform */
+		};
+	};
+};
+

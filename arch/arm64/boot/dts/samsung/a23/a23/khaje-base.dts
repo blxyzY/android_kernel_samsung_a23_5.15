@@ -1,0 +1,9 @@
+// SPDX-License-Identifier: GPL-2.0
+/*
+ * Private copy of the khaje base DTB for merging with the A23 board overlays.
+ *
+ * Building it here (rather than pointing the merge at vendor/qcom/khaje.dtb)
+ * keeps this directory from compiling the very same output file as vendor/,
+ * which raced under `make -jN dtbs` ("Couldn't open blob ... khaje.dtb").
+ */
+#include "../../../vendor/qcom/khaje.dts"

@@ -1,0 +1,230 @@
+/*
+ * Copyright (c) 2019, The Linux Foundation. All rights reserved.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 and
+ * only version 2 as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
+#include <dt-bindings/clock/qcom,gcc-khaje.h>
+
+&soc {
+    s2mu106_flash0: qcom,flash_0 {
+        label = "flash";
+        qcom,led-name = "led:flash_0";
+        qcom,max-current = <1500>;
+        qcom,default-led-trigger = "flash0_trigger";
+        qcom,id = <0>;
+        qcom,current-ma = <1400>;
+        qcom,duration-ms = <1280>;
+        qcom,ires-ua = <12500>;
+        qcom,hdrm-voltage-mv = <325>;
+        qcom,hdrm-vol-hi-lo-win-mv = <100>;
+        qcom,record-current-ma = <200>;
+    };
+
+    s2mu106_torch0: qcom,torch_0 {
+        label = "torch";
+        qcom,led-name = "led:torch_0";
+        qcom,max-current = <500>;
+        qcom,default-led-trigger = "torch0_trigger";
+        qcom,id = <0>;
+        qcom,current-ma = <300>;
+        qcom,ires-ua = <12500>;
+        qcom,hdrm-voltage-mv = <325>;
+        qcom,hdrm-vol-hi-lo-win-mv = <100>;
+    };
+
+    led_flash0: qcom,camera-flash@0 {
+        cell-index = <0>;
+        compatible = "qcom,camera-flash";
+        flash-source = <&s2mu106_flash0>;
+        torch-source = <&s2mu106_torch0>;
+        status = "ok";
+    };
+
+    i2c_32: i2c@32 {
+        cell-index = <32>;
+        compatible = "i2c-gpio";
+        gpios = <&tlmm 33 0>, /* sda */
+            <&tlmm 32 0>;     /* scl */
+        i2c-gpio,delay-us = <2>;
+        #address-cells = <1>;
+        #size-cells = <0>;
+
+        pinctrl-names = "default", "sleep";
+        pinctrl-0 = <&i2c_32_active>;
+        pinctrl-1 = <&i2c_32_suspend>;
+        status = "ok";
+	};
+};
+
+&i2c_32 {
+    ois_rear: qcom,ois@62  {
+        compatible = "qcom,ois";
+        cell-index = <0>;
+        reg = <0x51>;
+        slave-addr = <0xC4>;
+        slave-id = <0x456>;
+        pole-values = <0x01 0x00 0x00 0x00 0x00 0x00>;
+        gyro-orientation = <0x01>;
+
+        cam_vaf-supply = <&s2mpb03_0_l7>;
+        regulator-names = "cam_vaf";
+        rgltr-cntrl-support;
+        rgltr-min-voltage = <2800000>;
+        rgltr-max-voltage = <2800000>;
+        rgltr-load-current = <200000>;
+
+        qcom,cam-power-seq-type =  "cam_vaf", "cam_vdig", "cam_vio", "cam_gpio_custom1", "cam_reset";
+        qcom,cam-power-seq-cfg-val = <2800000 1 1 0 1>;
+        qcom,cam-power-seq-delay = <1 1 1 1 15>;
+
+        pinctrl-names = "cam_default", "cam_suspend";
+        gpio-no-mux = <0>;
+        gpios = 
+            <&gpio_expander 10 0>,//CAM_OIS_VDD_3P3
+            <&gpio_expander 15 0>,//VDD_OIS_MCU_1P8
+            <&gpio_expander 2 0>, // MCU_BOOT0_SWCLK
+            <&gpio_expander 6 0>; // MCU_nRST
+
+
+        gpio-vdig = <0>;
+        gpio-vio = <1>;
+        gpio-custom1 = <2>;
+        gpio-reset = <3>;
+        gpio-req-tbl-num = <0 1 2 3>;
+        gpio-req-tbl-flags = <0 0 0 0>;
+        gpio-req-tbl-label = "CAM_VDIG", "CAM_VIO", "MCU_BOOT0", "MCU_RESET0";
+        status = "ok";
+    };
+};
+
+&qupv3_se1_i2c {
+    status = "ok";
+
+    flash_led {
+        reg = <0x74>;
+        compatible = "qcom,s2mu106-fled";
+        enable = <1 1>;
+        flash-gpio = <&gpio_expander 18 0>;
+        torch-gpio = <&tlmm 86 0>;
+        pinctrl-names = "fled_default", "fled_suspend";
+        pinctrl-0 = <&cam_torch_active>;
+        pinctrl-1 = <&cam_torch_suspend>;
+        flash_current = <1300>;
+        preflash_current = <200>;
+        torch_current = <300>;
+        movie_current = <200>;
+        factory_current = <225>;
+        flashlight_current = <50 75 125 175 225>;
+        status = "okay";
+    };
+};
+
+&qupv3_se2_i2c {
+    status = "ok";
+
+    actuator_rear0: qcom,actuator@0xC {
+        cell-index = <0>;
+        reg = <0xC>;
+        slave-addr = <0x18>;
+        compatible = "qcom,actuator";
+        i2c-freq-mode = <3>;
+        cam_vio-supply = <&s2mpb03_0_l3>;
+        cam_vaf-supply = <&s2mpb03_0_l7>;
+        regulator-names = "cam_vio","cam_vaf";
+        rgltr-cntrl-support;
+        rgltr-min-voltage = <1800000 2800000>;
+        rgltr-max-voltage = <1800000 2800000>;
+        rgltr-load-current = <200000 200000>;
+        qcom,cam-power-seq-type = "cam_vio","cam_vaf";
+        qcom,cam-power-seq-cfg-val = <1 1>;
+        qcom,cam-power-seq-delay = <1 12>;
+    };
+
+    eeprom0: qcom,eeprom@0x50 {
+        cell-index = <0>;
+        reg = <0x50>;
+        compatible = "qcom,eeprom";
+        i2c-freq-mode = <1>;
+        cam_vio-supply = <&s2mpb03_0_l3>;
+        regulator-names = "cam_vio";
+        rgltr-cntrl-support;
+        slave-addr = <0xA0>;
+        sensor-mode = <0>;
+        sub-type = <2>;
+
+        qcom,cam-power-seq-type = "sensor_vreg";
+        qcom,cam-power-seq-val = "cam_vio";
+        qcom,cam-power-seq-cfg-val = <1>;
+        qcom,cam-power-seq-delay = <2>;
+
+        rgltr-min-voltage = <1800000>;
+        rgltr-max-voltage = <1800000>;
+        rgltr-load-current = <200000>;
+        sensor-position = <0>;
+
+        gpio-no-mux = <0>;
+        
+    };
+
+    eeprom4: qcom,eeprom@0x52 {
+        cell-index = <4>;
+        reg = <0x52>;
+        compatible = "qcom,eeprom";
+        i2c-freq-mode = <1>;
+        cam_vio-supply = <&s2mpb03_0_l3>;
+        regulator-names = "cam_vio";
+        rgltr-cntrl-support;
+        slave-addr = <0xA4>;
+        sensor-mode = <0>;
+        sub-type = <2>;
+
+        qcom,cam-power-seq-type = "sensor_vreg";
+        qcom,cam-power-seq-val = "cam_vio";
+        qcom,cam-power-seq-cfg-val = <1>;
+        qcom,cam-power-seq-delay = <2>;
+
+        rgltr-min-voltage = <1800000>;
+        rgltr-max-voltage = <1800000>;
+        rgltr-load-current = <200000>;
+        sensor-position = <4>;
+        gpio-no-mux = <0>;
+    };
+
+    eeprom5: qcom,eeprom@0x51 {
+        cell-index = <1>;
+        reg = <0x51>;
+        compatible = "qcom,eeprom";
+        i2c-freq-mode = <1>;
+        cam_vio-supply = <&s2mpb03_0_l3>;
+        regulator-names = "cam_vio";
+        rgltr-cntrl-support;
+        slave-addr = <0xA2>;
+        sensor-mode = <0>;
+        sub-type = <2>;
+        dualization-id = <1>;
+
+
+        qcom,cam-power-seq-type = "sensor_vreg";
+        qcom,cam-power-seq-val = "cam_vio";
+        qcom,cam-power-seq-cfg-val = <1>;
+        qcom,cam-power-seq-delay = <5>;
+
+        rgltr-min-voltage = <1800000>;
+        rgltr-max-voltage = <1800000>;
+        rgltr-load-current = <200000>;
+        sensor-position = <4>;
+        gpio-no-mux = <0>;
+    };
+};
+
+
+
+
+

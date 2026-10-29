@@ -38,3 +38,6 @@ subdir-y += xilinx
 else
 	subdir-y += vendor
 endif
+
+# Samsung board overlays that live next to (not inside) the vendor devicetree repo
+subdir-y += samsung

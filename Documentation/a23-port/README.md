@@ -53,8 +53,8 @@ macro `ADC_AMUX_THM2_PU2` -> `ADC5_AMUX_THM2_100K_PU` (same value, 0x4e); includ
 audio and camera nodes from 4.19, which reference labels the khaje base DTB does not define
 (`mdss_mdp`, `sde_dsi`, `bolero`, `wcd937x_codec`, `cam_cci0`, ...). Those come from the Qualcomm
 display/audio/camera devicetree repos, which are not part of the A05s devicetree checkout. Until
-they are added the phone has no display/audio/camera description. `split_dts` logic is in
-`scripts/a23-port/`-style tooling kept outside the tree.
+they are added the phone has no display/audio/camera description. The split of those blocks out
+of the 4.19 sources is reproducible with `scripts/a23-port/split_dts.py`.
 
 Build (needs the A05s devicetree repo as a sibling checkout named `a05s-devicetrees`):
 

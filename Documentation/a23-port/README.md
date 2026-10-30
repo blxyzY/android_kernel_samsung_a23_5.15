@@ -69,6 +69,11 @@ error for the A05s overlay `khaje-sec.a05s.overlay.00.dts` (an `#include` of
 
 Compile-tested only. Nothing here has been flashed or booted.
 
+## First boot attempt
+See [`BRINGUP.md`](BRINGUP.md) for the bring-up kernel, how to pack it into your stock `boot.img`,
+flashing, and reading the crash log (ramoops). Scripts: `scripts/a23-port/{build_bringup.sh,
+package_bringup.sh,make_dtbo.sh,repack_boot.py}`. Compile-tested only; never booted.
+
 ## Port order (what blocks boot first)
 1. ~~Board DTS for A23~~ (core overlays done, see above); display/audio/camera DT still missing.
 2. Display: panels `ft8720`, `ili7807s`, `nt36672c` + `ss_blic_s2dps01a01`.
